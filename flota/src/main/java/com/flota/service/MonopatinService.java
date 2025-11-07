@@ -36,4 +36,7 @@ public class MonopatinService {
                 .filter(m -> m.getKmTotalesAcumulados() > umbralKm)
                 .toList();
     }
+
+    public void cambiarEstado(String idMonopatin, String disponible) {
+    }
 }

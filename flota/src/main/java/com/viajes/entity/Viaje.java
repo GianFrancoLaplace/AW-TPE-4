@@ -3,7 +3,8 @@ package com.viajes.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import java.time.LocalDateTime; // Usar LocalDateTime o Instant para fechas
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "viaje")
@@ -13,21 +14,28 @@ public class Viaje {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idViaje;
 
-    private String idMonopatin; // FK lógica, no JPA/SQL
+    private String idMonopatin; // FK lógica
     private Long idUsuario;     // FK lógica
     private Long idCuenta;      // FK lógica
 
     private LocalDateTime fechaHoraInicio;
-    private LocalDateTime fechaHoraFin; // Nulo si está en curso
+    private LocalDateTime fechaHoraFin;
 
-    private Double kmRecorridos;
-    private Long idParadaOrigen; // FK lógica
-    private Long idParadaDestino; // FK lógica
+    private Double kmRecorridos = 0.0;
+    private Long idParadaOrigen;
+    private Long idParadaDestino;
 
-    private Double costoTotal;
+    private Double costoTotal = 0.0;
+
+    @Enumerated(EnumType.STRING)
+    private EstadoViaje estadoViaje;
 
     @OneToMany(mappedBy = "viaje", cascade = CascadeType.ALL)
     private List<Pausa> pausas;
 
-    // ... Constructor y métodos
+    public Viaje() {}
+
+    public enum EstadoViaje {
+        EN_CURSO, PAUSADO, FINALIZADO
+    }
 }
