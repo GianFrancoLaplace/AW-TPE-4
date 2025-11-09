@@ -1,6 +1,7 @@
 package com.viajes.controller;
 
-import com.viajes.dto.InicioViajeRequest; // DTO para recibir datos de inicio (idMonopatin, idUsuario)
+import com.viajes.dto.IniciarViajeDTO;
+import com.viajes.dto.FinalizarViajeDTO;
 import com.viajes.entity.Pausa;
 import com.viajes.entity.Viaje;
 import com.viajes.service.ViajeService;
@@ -13,23 +14,28 @@ import org.springframework.web.bind.annotation.*;
 public class ViajeController {
 
     @Autowired
-    private ViajeService service;
+    private ViajeService viajeService;
 
     @PostMapping("/iniciar")
-    public ResponseEntity<Viaje> iniciarViaje(@RequestBody InicioViajeRequest request) {
-        Viaje nuevoViaje = service.iniciarViaje(request);
-        return ResponseEntity.ok(nuevoViaje);
+    public ResponseEntity<Viaje> iniciarViaje(@RequestBody IniciarViajeDTO dto) {
+        Viaje viaje = viajeService.iniciarViaje(dto);
+        return ResponseEntity.ok(viaje);
     }
 
-    @PostMapping("/{id}/finalizar")
-    public ResponseEntity<Viaje> finalizarViaje(@PathVariable Long id, @RequestParam Long idParadaDestino) {
-        Viaje viajeFinalizado = service.finalizarViaje(id, idParadaDestino);
-        return ResponseEntity.ok(viajeFinalizado);
+    @PostMapping("/finalizar")
+    public ResponseEntity<Viaje> finalizarViaje(@RequestBody FinalizarViajeDTO dto) {
+        Viaje viaje = viajeService.finalizarViaje(dto);
+        return ResponseEntity.ok(viaje);
     }
 
-    @PostMapping("/{id}/pausar")
-    public ResponseEntity<Pausa> pausarViaje(@PathVariable Long id) {
-        Pausa nuevaPausa = service.pausarViaje(id);
-        return ResponseEntity.ok(nuevaPausa);
+    @PostMapping("/pausar/{idViaje}")
+    public ResponseEntity<Pausa> pausarViaje(@PathVariable Long idViaje) {
+        Pausa pausa = viajeService.pausarViaje(idViaje);
+        return ResponseEntity.ok(pausa);
+    }
+    @PostMapping("/reanudar/{idViaje}")
+    public ResponseEntity<Viaje> reanudarViaje(@PathVariable Long idViaje) {
+        Viaje viaje = viajeService.reanudarViaje(idViaje);
+        return ResponseEntity.ok(viaje);
     }
 }

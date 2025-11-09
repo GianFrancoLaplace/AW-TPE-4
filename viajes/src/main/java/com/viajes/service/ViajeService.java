@@ -1,10 +1,10 @@
 package com.viajes.service;
 
-import com.flota.entity.Monopatin;
-import com.flota.repository.ParadaRepository;
-import com.flota.service.MonopatinService;
-import com.flota.service.ParadaService;
-import com.viajes.dto.InicioViajeRequest;
+import com.viajes.dto.IniciarViajeDTO;
+import com.viajes.dto.FinalizarViajeDTO;
+import com.viajes.client.TarifaClient;
+import com.viajes.client.FlotaClient;
+import com.viajes.client.CuentaClient;
 import com.viajes.entity.Pausa;
 import com.viajes.entity.Viaje;
 import com.viajes.repository.PausaRepository;
@@ -13,9 +13,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.ArrayList;
+import java.util.Optional;
+import java.time.LocalDateTime;
 
 @Service
 public class ViajeService {
@@ -27,155 +28,144 @@ public class ViajeService {
     private PausaRepository pausaRepository;
 
     @Autowired
-    private ParadaService paradaService;
+    private TarifaClient tarifaClient;
 
     @Autowired
-    private MonopatinService monopatinService;
+    private FlotaClient flotaClient;
 
-    // TODO: Implementar la lógica completa de iniciar viaje
-    // 1. Validar que el monopatín existe y está disponible (llamada a servicio Flota)
-    // 2. Crear el viaje con fechaHoraInicio = LocalDateTime.now()
-    // 3. Actualizar el estado del monopatín a EN_USO
-    public Viaje iniciarViaje(InicioViajeRequest request) {
+    @Autowired
+    private CuentaClient cuentaClient;
+
+    // ---------- INICIAR VIAJE ----------
+    public Viaje iniciarViaje(IniciarViajeDTO dto) {
+
+        // Verificar disponibilidad del monopatín
+        boolean disponible = flotaClient.verificarDisponibilidad(dto.getIdMonopatin());
+        if (!disponible) {
+            throw new IllegalStateException("El monopatín no está disponible");
+        }
+
+        // Verificar cuenta
+        boolean cuentaValida = cuentaClient.verificarCuentaHabilitada(dto.getIdCuenta());
+        if (!cuentaValida) {
+            throw new IllegalStateException("La cuenta no está habilitada o sin crédito suficiente");
+        }
+
+        // Crear nuevo viaje
         Viaje viaje = new Viaje();
-        viaje.setIdMonopatin(request.getIdMonopatin());
-        viaje.setIdUsuario(request.getIdUsuario());
-        viaje.setIdCuenta(request.getIdCuenta());
-        viaje.setIdParadaOrigen(request.getIdParadaOrigen());
-        viaje.setFechaHoraInicio(LocalDateTime.now());
+        viaje.setIdUsuario(dto.getIdUsuario());
+        viaje.setIdMonopatin(dto.getIdMonopatin());
+        viaje.setIdCuenta(dto.getIdCuenta());
+        viaje.setInicio(LocalDateTime.now());
         viaje.setEstadoViaje(Viaje.EstadoViaje.EN_CURSO);
+        viaje.setKmRecorridos(0.0);
 
-        // TODO: Llamar a servicio Flota para actualizar estado monopatín
+        Viaje nuevoViaje = viajeRepository.save(viaje);
 
-        return viajeRepository.save(viaje);
+        // Marcar monopatín en uso
+        flotaClient.marcarEnUso(dto.getIdMonopatin());
+
+        return nuevoViaje;
     }
 
-    // TODO: Implementar validación de GPS (parada destino)
-    // verificar que la ubicación del monopatín está dentro del radio de la parada
-    public Viaje finalizarViaje(Long idViaje, Long idParadaDestino) {
-        Viaje viaje = viajeRepository.findById(idViaje)
-                .orElseThrow(() -> new RuntimeException("Viaje no encontrado"));
-
-        // TODO: Validar que el monopatín está en una parada válida (GPS)
-
-
-        Monopatin monopatin = monopatinService.findById(viaje.getIdMonopatin());
-
-        if (!paradaService.estaDentroDeParada(
-                idParadaDestino,
-                monopatin.getLatitudActual(),
-                monopatin.getLongitudActual())) {
-            throw new RuntimeException("El monopatín no está dentro de la parada destino");
-        }
-
-        LocalDateTime horarioActual = LocalDateTime.now();
-        long duracionTotalMinutos  = Duration.between(viaje.getFechaHoraInicio(), horarioActual).toMinutes();
-
-        List<Pausa> pausas = viaje.getPausas();
-
-        // Detectar si hubo pausa extendida (>15 min)
-        boolean huboPausaExtendida = false;
-        LocalDateTime momentoPausaExtendida = null;
-
-        for (Pausa pausa : pausas) {
-            if (pausa.getFechaHoraFinPausa() != null) { // Solo pausas finalizadas
-                long duracionPausa = Duration.between(
-                        pausa.getFechaHoraInicioPausa(),
-                        pausa.getFechaHoraFinPausa()
-                ).toMinutes();
-
-                if (duracionPausa > 15) {
-                    huboPausaExtendida = true;
-                    momentoPausaExtendida = pausa.getFechaHoraInicioPausa().plusMinutes(15);
-                    break; // Con una pausa extendida ya cambia toda la tarifa
-                }
-            }
-        }
-
-        TarifaDTO tarifa = obtenerTarifaActiva(); // Llamada HTTP a microservicio Tarifas
-
-        double costoTotal;
-
-        if (huboPausaExtendida) {
-            // Minutos hasta que se activó la tarifa extendida (15 min después del inicio de pausa)
-            long minutosNormales = Duration.between(viaje.getFechaHoraInicio(), momentoPausaExtendida).toMinutes();
-            // Minutos restantes con tarifa extendida
-            long minutosExtendidos = duracionTotalMinutos - minutosNormales;
-
-            costoTotal = (minutosNormales * tarifa.getPrecioMinutoNormal())
-                    + (minutosExtendidos * tarifa.getPrecioMinutoPausaExtendida());
-        } else {
-            // Todo el viaje a tarifa normal
-            costoTotal = duracionTotalMinutos * tarifa.getPrecioMinutoNormal();
-        }
-
-        // Asignar el costo calculado al viaje
-        viaje.setCostoTotal(costoTotal);
-
-        // Registrar transacción en microservicio de Cuentas
-        registrarTransaccion(viaje.getIdCuenta(), costoTotal, idViaje);
-
-        // Actualizar estado del monopatín a DISPONIBLE
-        monopatinService.cambiarEstado(viaje.getIdMonopatin(), "DISPONIBLE");
-
-        // Finalizar viaje
-        viaje.setFechaHoraFin(horarioActual); // Reusar variable
-        viaje.setIdParadaDestino(idParadaDestino);
-        viaje.setEstadoViaje(Viaje.EstadoViaje.FINALIZADO);
-
-        return viajeRepository.save(viaje);
-    }
-
-    private void registrarTransaccion(long idCuenta, double costoTotal, long idViaje) {
-        // TODO implementar
-        System.out.println("Registrando transaccion...");
-        System.out.println("idCuenta: " + idCuenta);
-        System.out.println("costoTotal: " + costoTotal);
-        System.out.println("idViaje: " + idViaje);
-        System.out.println("Transaccion registrada de manera épica");
-    }
-
-    private TarifaDTO obtenerTarifaActiva() {
-        TarifaDTO tarifa = new TarifaDTO();
-        tarifa.setTarifaViaje(0);
-        tarifa.setTarifaPausa(0);
-        return tarifa;
-    }
-
+    // ---------- PAUSAR VIAJE ----------
     public Pausa pausarViaje(Long idViaje) {
         Viaje viaje = viajeRepository.findById(idViaje)
                 .orElseThrow(() -> new RuntimeException("Viaje no encontrado"));
 
-        Pausa pausa = new Pausa();
-        pausa.setViaje(viaje);
-        pausa.setFechaHoraInicioPausa(LocalDateTime.now());
+        if (viaje.getEstadoViaje() != Viaje.EstadoViaje.EN_CURSO) {
+            throw new RuntimeException("El viaje no está en curso y no puede pausarse");
+        }
 
-        viaje.setEstadoViaje(Viaje.EstadoViaje.PAUSADO);
-        viajeRepository.save(viaje);
+        // Evitar múltiples pausas activas
+        pausaRepository.findByViajeIdAndActivaTrue(idViaje)
+                .ifPresent(p -> {
+                    throw new RuntimeException("Ya existe una pausa activa para este viaje");
+                });
+
+        Pausa pausa = new Pausa();
+        pausa.setInicioPausa(LocalDateTime.now());
+        pausa.setActiva(true);
+        pausa.setExtendida(false);
+        pausa.setViaje(viaje);
 
         return pausaRepository.save(pausa);
     }
-}
 
-class TarifaDTO {
-    int tarifaPausa;
-    int tarifaViaje;
+    // ---------- REANUDAR VIAJE ----------
+    public Viaje reanudarViaje(Long idViaje) {
+        Pausa pausaActiva = pausaRepository.findByViajeIdAndActivaTrue(idViaje)
+                .orElseThrow(() -> new RuntimeException("No hay pausa activa para este viaje"));
 
-    public TarifaDTO() {}
+        pausaActiva.setFinPausa(LocalDateTime.now());
+        pausaActiva.setActiva(false);
 
-    public void setTarifaPausa(int tarifaPausa) {
-        this.tarifaPausa = tarifaPausa;
+        // Calcular duración de la pausa
+        Duration duracion = Duration.between(pausaActiva.getInicioPausa(), pausaActiva.getFinPausa());
+        if (duracion.toMinutes() > 15) {
+            pausaActiva.setExtendida(true);
+        }
+
+        pausaRepository.save(pausaActiva);
+
+        return pausaActiva.getViaje();
     }
 
-    public void setTarifaViaje(int tarifaViaje) {
-        this.tarifaViaje = tarifaViaje;
-    }
+    // ---------- FINALIZAR VIAJE ----------
+    public Viaje finalizarViaje(FinalizarViajeDTO dto) {
+        Viaje viaje = viajeRepository.findById(dto.getIdViaje())
+                .orElseThrow(() -> new RuntimeException("Viaje no encontrado"));
 
-    public long getPrecioMinutoNormal() {
-        return tarifaViaje / 60;
-    }
+        if (viaje.getFin() != null) {
+            throw new RuntimeException("El viaje ya fue finalizado");
+        }
 
-    public long getPrecioMinutoPausaExtendida() {
-        return tarifaViaje / 60;
+        // Validar ubicación final
+        boolean enParada = flotaClient.verificarUbicacionEnParada(
+                String.valueOf(viaje.getIdMonopatin()), dto.getLatitud(), dto.getLongitud()
+        );
+        if (!enParada) {
+            throw new RuntimeException("El monopatín no se encuentra en una parada permitida");
+        }
+
+        // Finalizar viaje
+        viaje.setFin(LocalDateTime.now());
+        viaje.setEstadoViaje(Viaje.EstadoViaje.FINALIZADO);
+
+        // Calcular duración total
+        long duracionTotalMinutos = Duration.between(viaje.getInicio(), viaje.getFin()).toMinutes();
+
+        // Calcular pausas
+        Integer minutosPausa = pausaRepository.calcularTotalMinutosPausas(viaje.getId());
+        boolean tienePausaExcesiva = pausaRepository.tienePausaExcesiva(viaje.getId());
+
+        if (minutosPausa == null) minutosPausa = 0;
+
+        viaje.setMinutosTotales((int) duracionTotalMinutos);
+        viaje.setMinutosPausa(minutosPausa);
+        viaje.setPausaExtendida(tienePausaExcesiva);
+
+        // Calcular kilómetros recorridos
+        double kmRecorridos = flotaClient.obtenerKmRecorridos(
+                String.valueOf(viaje.getIdMonopatin()),
+                viaje.getInicio().toString(),
+                viaje.getFin().toString()
+        );
+        viaje.setKmRecorridos(kmRecorridos);
+
+        viajeRepository.save(viaje);
+
+        // Marcar monopatín disponible nuevamente
+        flotaClient.marcarComoDisponible(viaje.getIdMonopatin());
+
+        // Enviar datos al microservicio de tarifa
+        tarifaClient.calcularCosto(
+                viaje.getId(),
+                viaje.getIdCuenta(),
+                duracionTotalMinutos,
+                tienePausaExcesiva
+        );
+
+        return viaje;
     }
 }
