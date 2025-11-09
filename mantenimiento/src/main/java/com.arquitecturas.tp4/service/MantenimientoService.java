@@ -8,8 +8,6 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Data
-
-
 public class MantenimientoService {
     @Autowired
     private MantenimientoRepository mantenimientoRepository;
