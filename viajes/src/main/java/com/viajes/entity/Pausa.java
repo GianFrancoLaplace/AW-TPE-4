@@ -3,6 +3,7 @@ package com.viajes.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Optional;
@@ -26,7 +27,8 @@ public class Pausa {
     private boolean activa;
     private boolean extendida;
 
-    public Pausa() {}
+    public Pausa() {
+    }
 
 
 }
