@@ -3,6 +3,7 @@ package com.viajes.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Optional;
@@ -10,7 +11,8 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "viaje")
-@Getter @Setter
+@Getter
+@Setter
 public class Viaje {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,7 +40,8 @@ public class Viaje {
     private List<Pausa> pausas = new ArrayList<>();
 
 
-    public Viaje() {}
+    public Viaje() {
+    }
 
 
     public enum EstadoViaje {

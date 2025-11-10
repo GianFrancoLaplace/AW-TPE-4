@@ -29,11 +29,25 @@ public class ParadaService {
         repository.deleteById(id);
     }
 
-    public boolean estaDentroDeParada(long idParadaDestion, double longitudActual, double latitudActual) {
-        return true; // TODO implementar
-    }
+    public boolean estaDentroDeParada(Long idParadaDestino, Double longitudActual, Double latitudActual) {
+        Parada parada = findById(idParadaDestino);
 
-    // TODO: Implementar método que verifique si un punto (lat, lon)
-    // está dentro del radio de una parada (cálculo de distancia geográfica)
-    // public boolean estaDentroDeParada(Long idParada, Double lat, Double lon) { ... }
+        // Conversión aproximada de grados a metros
+        // 1 grado de latitud ≈ 111,000 metros (constante en toda la Tierra)
+        // 1 grado de longitud ≈ 111,000 * cos(latitud) metros (varía según latitud)
+
+        double deltaLat = Math.abs(latitudActual - parada.getLatitudCentro());
+        double deltaLon = Math.abs(longitudActual - parada.getLongitudCentro());
+
+        // Convertir diferencias de grados a metros
+        double distanciaLatMetros = deltaLat * 111000; // 1° lat ≈ 111 km
+        double distanciaLonMetros = deltaLon * 111000 * Math.cos(Math.toRadians(parada.getLatitudCentro()));
+
+        // Distancia aproximada (Pitágoras en vez de Haversine)
+        double distanciaTotal = Math.sqrt(
+                Math.pow(distanciaLatMetros, 2) + Math.pow(distanciaLonMetros, 2)
+        );
+
+        return distanciaTotal <= parada.getRadioMetros();
+    }
 }

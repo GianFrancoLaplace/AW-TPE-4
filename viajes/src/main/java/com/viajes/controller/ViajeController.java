@@ -33,6 +33,7 @@ public class ViajeController {
         Pausa pausa = viajeService.pausarViaje(idViaje);
         return ResponseEntity.ok(pausa);
     }
+
     @PostMapping("/reanudar/{idViaje}")
     public ResponseEntity<Viaje> reanudarViaje(@PathVariable Long idViaje) {
         Viaje viaje = viajeService.reanudarViaje(idViaje);
