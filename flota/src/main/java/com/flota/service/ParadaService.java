@@ -61,7 +61,18 @@ public class ParadaService {
         return repository.findAll(); // TODO: Filtrar activas
     }
 
+    /**
+     * Cambia el estado activo/inactivo de una parada.
+     * Según el TPE: el administrador puede deshabilitar paradas temporalmente
+     * cuando sea necesario (ej: mantenimiento de la zona).
+     *
+     * @param id - ID de la parada a modificar
+     * @param activa - true para activar, false para desactivar
+     */
     public void cambiarEstado(Long id, Boolean activa) {
+        Parada parada = findById(id);
+        parada.setActiva(activa);
+        repository.save(parada);
     }
 
     public List<Parada> buscarCercanas(Double lat, Double lon, Double radio) {
