@@ -4,6 +4,8 @@ import com.flota.entity.Parada;
 import com.flota.repository.ParadaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -43,11 +45,26 @@ public class ParadaService {
         double distanciaLatMetros = deltaLat * 111000; // 1° lat ≈ 111 km
         double distanciaLonMetros = deltaLon * 111000 * Math.cos(Math.toRadians(parada.getLatitudCentro()));
 
-        // Distancia aproximada (Pitágoras en vez de Haversine)
+        // Distancia aproximada
         double distanciaTotal = Math.sqrt(
                 Math.pow(distanciaLatMetros, 2) + Math.pow(distanciaLonMetros, 2)
         );
 
         return distanciaTotal <= parada.getRadioMetros();
+    }
+
+    public Parada update(Long id, Parada paradaActualizada) {
+        return new Parada();
+    }
+
+    public List<Parada> getParadasActivas() {
+        return repository.findAll(); // TODO: Filtrar activas
+    }
+
+    public void cambiarEstado(Long id, Boolean activa) {
+    }
+
+    public List<Parada> buscarCercanas(Double lat, Double lon, Double radio) {
+        return new ArrayList<>();
     }
 }

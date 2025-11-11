@@ -18,14 +18,14 @@ public class Monopatin {
     private Double latitudActual;
     private Double longitudActual;
 
-    // Para reportes de mantenimiento [cite: 86]
+    // Para reportes de mantenimiento
     private Double kmTotalesAcumulados = 0.0;
     private Integer tiempoUsoTotalMinutos = 0;
 
     // Constructor vacío requerido por JPA
     public Monopatin() {}
 
-    // Enum para tipos de estados, más seguro que un String [cite: 85]
+    // Enum para tipos de estados, más seguro que un String
     public enum EstadoMonopatin {
         DISPONIBLE, EN_USO, EN_MANTENIMIENTO, BATERIA_BAJA
     }
