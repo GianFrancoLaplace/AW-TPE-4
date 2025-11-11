@@ -29,7 +29,7 @@ public class MonopatinService {
         repository.deleteById(id); // DELETE
     }
 
-    // Funcionalidad clave: Reporte por KMs para Mantenimiento [cite: 109]
+    // Funcionalidad clave: Reporte por KMs para Mantenimiento
     public List<Monopatin> getMonopatinesParaMantenimiento(double umbralKm) {
         // En el mundo real, esto sería una consulta compleja; aquí lo simplificamos:
         return repository.findAll().stream()
@@ -37,6 +37,9 @@ public class MonopatinService {
                 .toList();
     }
 
-    public void cambiarEstado(String idMonopatin, String disponible) {
+    public void cambiarEstado(String idMonopatin, String nuevoEstado) {
+        Monopatin monopatin = findById(idMonopatin);
+        monopatin.setEstado(Monopatin.EstadoMonopatin.valueOf(nuevoEstado));
+        repository.save(monopatin);
     }
 }

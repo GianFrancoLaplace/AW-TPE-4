@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/mantenimiento")
-
 public class MantenimientoController {
 @Autowired
     private final MantenimientoService mantenimientoService;
