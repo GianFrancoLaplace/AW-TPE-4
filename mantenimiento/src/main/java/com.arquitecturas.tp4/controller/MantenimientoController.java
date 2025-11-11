@@ -3,15 +3,12 @@ import com.arquitecturas.tp4.entities.Mantenimiento;
 import com.arquitecturas.tp4.service.MantenimientoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/mantenimiento")
 public class MantenimientoController {
-    @Autowired
+@Autowired
     private final MantenimientoService mantenimientoService;
 
     public MantenimientoController(MantenimientoService mantenimientoService) {
@@ -24,6 +21,7 @@ public class MantenimientoController {
         return ResponseEntity.ok(mantenimientoNuevo);
     }
 
+    @PatchMapping("/terminarMantenimiento/{id_monopatin}")
     public void updateMantenimiento(@RequestBody int monopatinId){
         mantenimientoService.terminarMantiniminento(monopatinId);
     }
