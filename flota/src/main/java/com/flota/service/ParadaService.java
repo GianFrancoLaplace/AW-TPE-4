@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ParadaService {
@@ -57,8 +58,16 @@ public class ParadaService {
         return new Parada();
     }
 
+    /**
+     * Obtiene todas las paradas que están activas (disponibles para uso).
+     * Los usuarios solo deben ver paradas activas en el mapa de la app.
+     *
+     * @return Lista de paradas con activa = true
+     */
     public List<Parada> getParadasActivas() {
-        return repository.findAll(); // TODO: Filtrar activas
+        return repository.findAll().stream()
+                .filter(parada -> parada.getActiva())
+                .collect(Collectors.toList());
     }
 
     /**
