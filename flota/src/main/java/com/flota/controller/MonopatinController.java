@@ -139,6 +139,7 @@ public class MonopatinController {
             @PathVariable String id,
             @RequestBody Map<String, Long> body) {
         Long idParada = body.get("idParada");
-        return ResponseEntity.ok(service.findById(id));
+        Monopatin actualizado = service.ubicarEnParada(id, idParada);
+        return ResponseEntity.ok(actualizado);
     }
 }
