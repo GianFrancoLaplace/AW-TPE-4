@@ -1,13 +1,18 @@
 package org.example.microservicioidentidadyauth.util;
 
 import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Component;
+
+import javax.crypto.SecretKey;
 import java.util.Date;
 
 @Component
 public class JwtUtil {
 
-    private final String SECRET_KEY = "mi_clave_secreta_super_segura";
+    private final SecretKey SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+
+    private final long EXPIRATION_TIME = 86400000;
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);

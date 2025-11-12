@@ -16,7 +16,9 @@ import java.util.Optional;
 public class AuthService {
     @Autowired
     private UsuarioRepository authRepository;
+    @Autowired
     private JwtUtil jwtUtil;
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
     public Optional<Usuario> buscarPorEmail(String email) {

@@ -43,7 +43,6 @@ public class AuthController {
         }
     }
 
-    // 🔹 Login de usuario
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Map<String, String> request) {
         try {
