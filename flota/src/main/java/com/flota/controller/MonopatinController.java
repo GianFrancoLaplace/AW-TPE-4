@@ -26,7 +26,7 @@ public class MonopatinController {
 
     // READ: GET /monopatines/{id}
     @GetMapping("/{id}")
-    public ResponseEntity<Monopatin> getMonopatinById(@PathVariable String id) {
+    public ResponseEntity<Monopatin> getMonopatinById(@PathVariable Long id) {
         Monopatin monopatin = service.findById(id);
         return ResponseEntity.ok(monopatin);
     }
@@ -40,7 +40,7 @@ public class MonopatinController {
     // UPDATE: PUT /monopatines/{id}
     @PutMapping("/{id}")
     public ResponseEntity<Monopatin> updateMonopatin(
-            @PathVariable String id,
+            @PathVariable Long id,
             @RequestBody Monopatin monopatinActualizado) {
         Monopatin updated = service.update(id, monopatinActualizado);
         return ResponseEntity.ok(updated);
@@ -48,7 +48,7 @@ public class MonopatinController {
 
     // DELETE: DELETE /monopatines/{id}
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteMonopatin(@PathVariable String id) {
+    public ResponseEntity<Void> deleteMonopatin(@PathVariable Long id) {
         service.deleteById(id);
         return ResponseEntity.noContent().build();
     }
@@ -60,7 +60,7 @@ public class MonopatinController {
     // Body: { "nuevoEstado": "EN_MANTENIMIENTO" }
     @PutMapping("/{id}/estado")
     public ResponseEntity<Monopatin> cambiarEstado(
-            @PathVariable String id,
+            @PathVariable Long id,
             @RequestBody Map<String, String> body) {
         String nuevoEstado = body.get("nuevoEstado");
         service.cambiarEstado(id, nuevoEstado);
@@ -72,7 +72,7 @@ public class MonopatinController {
     // Body: { "latitud": -37.3213, "longitud": -59.1234 }
     @PutMapping("/{id}/ubicacion")
     public ResponseEntity<Monopatin> actualizarUbicacion(
-            @PathVariable String id,
+            @PathVariable Long id,
             @RequestBody Map<String, Double> ubicacion) {
         Double latitud = ubicacion.get("latitud");
         Double longitud = ubicacion.get("longitud");
@@ -85,7 +85,7 @@ public class MonopatinController {
     // Body: { "kmRecorridos": 5.2, "minutosUsados": 25 }
     @PutMapping("/{id}/uso")
     public ResponseEntity<Monopatin> actualizarUso(
-            @PathVariable String id,
+            @PathVariable Long id,
             @RequestBody Map<String, Number> uso) {
         Double kmRecorridos = uso.get("kmRecorridos").doubleValue();
         Integer minutosUsados = uso.get("minutosUsados").intValue();
@@ -126,7 +126,7 @@ public class MonopatinController {
     // Registrar monopatín en mantenimiento
     // POST /monopatines/{id}/mantenimiento
     @PostMapping("/{id}/mantenimiento")
-    public ResponseEntity<Monopatin> registrarEnMantenimiento(@PathVariable String id) {
+    public ResponseEntity<Monopatin> registrarEnMantenimiento(@PathVariable Long id) {
         service.cambiarEstado(id, "EN_MANTENIMIENTO");
         return ResponseEntity.ok(service.findById(id));
     }
@@ -136,7 +136,7 @@ public class MonopatinController {
     // Body: { "idParada": 1 }
     @PostMapping("/{id}/ubicar-parada")
     public ResponseEntity<Monopatin> ubicarEnParada(
-            @PathVariable String id,
+            @PathVariable Long id,
             @RequestBody Map<String, Long> body) {
         Long idParada = body.get("idParada");
         Monopatin actualizado = service.ubicarEnParada(id, idParada);
