@@ -76,7 +76,6 @@ public class ViajeService {
         if (viaje.getEstadoViaje() != Viaje.EstadoViaje.EN_CURSO) {
             throw new RuntimeException("El viaje no está en curso y no puede pausarse");
         }
-
         // Evitar múltiples pausas activas
         pausaRepository.findByViajeIdAndActivaTrue(idViaje)
                 .ifPresent(p -> {
@@ -99,7 +98,6 @@ public class ViajeService {
 
         pausaActiva.setFinPausa(LocalDateTime.now());
         pausaActiva.setActiva(false);
-
         // Calcular duración de la pausa
         Duration duracion = Duration.between(pausaActiva.getInicioPausa(), pausaActiva.getFinPausa());
         if (duracion.toMinutes() > 15) {
