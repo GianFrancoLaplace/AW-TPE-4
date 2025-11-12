@@ -18,36 +18,34 @@ public class MonopatinService {
     private ParadaService paradaService;
 
     public Monopatin save(Monopatin m) {
-        return repository.save(m); // CREATE/UPDATE
+        return repository.save(m);
     }
 
     public List<Monopatin> findAll() {
-        return repository.findAll(); // READ
+        return repository.findAll();
     }
 
-    public Monopatin findById(String id) {
-        // Lanza excepción si no encuentra
+    public Monopatin findById(Long id) {
         return repository.findById(id).orElseThrow(() -> new RuntimeException("Monopatín no encontrado."));
     }
 
-    public void deleteById(String id) {
-        repository.deleteById(id); // DELETE
+    public void deleteById(Long id) {
+        repository.deleteById(id);
     }
 
-    // Reporte por KMs para Mantenimiento
     public List<Monopatin> getMonopatinesParaMantenimiento(double umbralKm) {
         return repository.findAll().stream()
                 .filter(m -> m.getKmTotalesAcumulados() > umbralKm)
                 .toList();
     }
 
-    public void cambiarEstado(String idMonopatin, String nuevoEstado) {
+    public void cambiarEstado(Long idMonopatin, String nuevoEstado) {
         Monopatin monopatin = findById(idMonopatin);
         monopatin.setEstado(Monopatin.EstadoMonopatin.valueOf(nuevoEstado));
         repository.save(monopatin);
     }
 
-    public void actualizarUbicacion(String id, Double latitud, Double longitud) {
+    public void actualizarUbicacion(Long id, Double latitud, Double longitud) {
         Monopatin monopatin = findById(id);
 
         if (monopatin == null)
@@ -59,7 +57,7 @@ public class MonopatinService {
         repository.save(monopatin);
     }
 
-    public void actualizarUso(String id, Double kmRecorridos, Integer minutosUsados) {
+    public void actualizarUso(Long id, Double kmRecorridos, Integer minutosUsados) {
         Monopatin monopatin = findById(id);
 
         if (monopatin == null)
@@ -87,21 +85,17 @@ public class MonopatinService {
      * @return Lista de monopatines dentro del radio
      */
     public List<Monopatin> buscarCercanos(Double lat, Double lon, Double radioMetros) {
-        // Obtener todos los monopatines
         return repository.findAll().stream()
                 .filter(monopatin -> {
-                    // Validar que el monopatín tenga ubicación
                     if (monopatin.getLatitudActual() == null || monopatin.getLongitudActual() == null) {
                         return false;
                     }
 
-                    // Calcular distancia usando Pitágoras
                     double distancia = calcularDistancia(
                             lat, lon,
                             monopatin.getLatitudActual(), monopatin.getLongitudActual()
                     );
 
-                    // Incluir solo si está dentro del radio
                     return distancia <= radioMetros;
                 })
                 .collect(Collectors.toList());
@@ -119,30 +113,13 @@ public class MonopatinService {
                 .collect(Collectors.toList());
     }
 
-    /**
-     * Método auxiliar para calcular la distancia entre dos puntos geográficos usando Pitágoras.
-     * Conversión aproximada:
-     * - 1 grado de latitud ≈ 111,000 metros (constante)
-     * - 1 grado de longitud ≈ 111,000 * cos(latitud) metros (varía según latitud)
-     *
-     * @param lat1 - Latitud del primer punto
-     * @param lon1 - Longitud del primer punto
-     * @param lat2 - Latitud del segundo punto
-     * @param lon2 - Longitud del segundo punto
-     * @return Distancia en metros
-     */
     private double calcularDistancia(Double lat1, Double lon1, Double lat2, Double lon2) {
-        // Calcular diferencias en grados
         double deltaLat = Math.abs(lat1 - lat2);
         double deltaLon = Math.abs(lon1 - lon2);
 
-        // Convertir diferencias de latitud a metros
         double distanciaLatMetros = deltaLat * 111000;
-
-        // Convertir diferencias de longitud a metros (ajustado por latitud)
         double distanciaLonMetros = deltaLon * 111000 * Math.cos(Math.toRadians(lat1));
 
-        // Aplicar Pitágoras: distancia = √(x² + y²)
         return Math.sqrt(
                 Math.pow(distanciaLatMetros, 2) + Math.pow(distanciaLonMetros, 2)
         );
@@ -158,10 +135,9 @@ public class MonopatinService {
      * @return Monopatín actualizado
      * @throws RuntimeException si el monopatín no existe
      */
-    public Monopatin update(String id, Monopatin monopatinActualizado) {
+    public Monopatin update(long id, Monopatin monopatinActualizado) {
         Monopatin existente = findById(id);
 
-        // Actualizar solo campos no nulos
         if (monopatinActualizado.getEstado() != null) {
             existente.setEstado(monopatinActualizado.getEstado());
         }
@@ -190,11 +166,10 @@ public class MonopatinService {
      * @param idParada - ID de la parada donde se ubicará
      * @return Monopatín con ubicación actualizada
      */
-    public Monopatin ubicarEnParada(String idMonopatin, Long idParada) {
+    public Monopatin ubicarEnParada(Long idMonopatin, Long idParada) {
         Monopatin monopatin = findById(idMonopatin);
         Parada parada = paradaService.findById(idParada);
 
-        // Actualizar ubicación del monopatín a las coordenadas de la parada
         monopatin.setLatitudActual(parada.getLatitudCentro());
         monopatin.setLongitudActual(parada.getLongitudCentro());
 
