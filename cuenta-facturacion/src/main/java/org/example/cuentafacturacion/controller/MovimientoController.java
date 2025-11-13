@@ -1,8 +1,6 @@
 /*
 package org.example.cuentafacturacion.controller;
 
-import lombok.Getter;
-import lombok.Setter;
 import org.example.cuentafacturacion.dto.MovimientoDTO;
 import org.example.cuentafacturacion.entity.Movimiento;
 import org.example.cuentafacturacion.service.MovimientoService;

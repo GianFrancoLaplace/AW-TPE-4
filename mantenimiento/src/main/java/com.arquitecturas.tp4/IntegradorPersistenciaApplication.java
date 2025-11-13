@@ -26,7 +26,7 @@ public class IntegradorPersistenciaApplication {
         MantenimientoService ms = context.getBean(MantenimientoService.class);
         //ms.addMantenimiento(nuevo);
         ms.terminarMantiniminento(3);
-        System.out.println("✅ Mantenimiento insertado correctamente");
+        System.out.println("Mantenimiento insertado correctamente");
 
     }
 }
