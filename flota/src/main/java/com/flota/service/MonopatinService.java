@@ -45,16 +45,23 @@ public class MonopatinService {
         repository.save(monopatin);
     }
 
-    public void actualizarUbicacion(Long id, Double latitud, Double longitud) {
+    public Monopatin actualizarUbicacion(Long id, Double latitud, Double longitud) {
+        // Validar coordenadas
+        if (latitud == null || longitud == null) {
+            throw new IllegalArgumentException("Latitud y longitud no pueden ser nulas");
+        }
+        if (latitud < -90 || latitud > 90) {
+            throw new IllegalArgumentException("Latitud debe estar entre -90 y 90");
+        }
+        if (longitud < -180 || longitud > 180) {
+            throw new IllegalArgumentException("Longitud debe estar entre -180 y 180");
+        }
+
         Monopatin monopatin = findById(id);
-
-        if (monopatin == null)
-            throw new RuntimeException("Monopatin no encontrado.");
-
         monopatin.setLatitudActual(latitud);
         monopatin.setLongitudActual(longitud);
 
-        repository.save(monopatin);
+        return repository.save(monopatin);
     }
 
     public void actualizarUso(Long id, Double kmRecorridos, Integer minutosUsados) {
