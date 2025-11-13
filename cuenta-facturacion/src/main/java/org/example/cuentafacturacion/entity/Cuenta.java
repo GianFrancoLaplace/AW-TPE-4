@@ -38,7 +38,7 @@ public class Cuenta {
     }
 
     // Getters
-    public Long getIdCuenta() {
+    public Integer getIdCuenta() {
         return idCuenta;
     }
 
@@ -67,7 +67,7 @@ public class Cuenta {
     }
 
     // Setters
-    public void setIdCuenta(Long idCuenta) {
+    public void setIdCuenta(Integer idCuenta) {
         this.idCuenta = idCuenta;
     }
 
