@@ -76,8 +76,8 @@ public class MonopatinController {
             @RequestBody Map<String, Double> ubicacion) {
         Double latitud = ubicacion.get("latitud");
         Double longitud = ubicacion.get("longitud");
-        service.actualizarUbicacion(id, latitud, longitud);
-        return ResponseEntity.ok(service.findById(id));
+        Monopatin actualizado = service.actualizarUbicacion(id, latitud, longitud);
+        return ResponseEntity.ok(actualizado);
     }
 
     // Actualizar km y tiempo de uso (lo llama el servicio de Viajes al finalizar)
