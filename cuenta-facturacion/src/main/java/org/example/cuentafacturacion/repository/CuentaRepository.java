@@ -10,8 +10,8 @@ import org.springframework.stereotype.Repository;
 public interface CuentaRepository extends JpaRepository<Cuenta, Long> {
 
     @Query("UPDATE Cuenta c SET c.estado ='ANULADA'  WHERE c.idCuenta = :id")
-    public void updateEstado(@Param("id") int id);
+    void updateEstado(@Param("id") int id);
 
     @Query("UPDATE Cuenta c SET c.categoria = :categoria  WHERE c.idCuenta = :id")
-    public void updatePlan(@Param("id") int id, @Param("categoria") String categoria);
+    void updatePlan(@Param("id") int id, @Param("categoria") String categoria);
 }
