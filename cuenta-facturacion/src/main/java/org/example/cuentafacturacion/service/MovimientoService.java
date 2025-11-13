@@ -1,3 +1,4 @@
+/*
 package org.example.cuentafacturacion.service;
 
 import jakarta.transaction.Transactional;
@@ -39,3 +40,5 @@ public class MovimientoService {
         return movimientoRepository.save(movimiento);
     }
 }
+
+ */

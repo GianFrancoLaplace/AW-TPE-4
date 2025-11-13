@@ -25,6 +25,7 @@ public class Cuenta {
     private TipoCuenta categoria;
 
     
+    private String nombre;
 
     private int idMercadopago;
 

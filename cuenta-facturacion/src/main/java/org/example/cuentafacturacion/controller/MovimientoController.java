@@ -1,3 +1,4 @@
+/*
 package org.example.cuentafacturacion.controller;
 
 import lombok.Getter;
@@ -30,3 +31,4 @@ public class MovimientoController {
         return ResponseEntity.ok(movimiento);
     }
 }
+*/

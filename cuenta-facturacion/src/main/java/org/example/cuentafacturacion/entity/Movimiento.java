@@ -1,3 +1,4 @@
+/*
 package org.example.cuentafacturacion.entity;
 
 import jakarta.persistence.*;
@@ -27,3 +28,5 @@ public class Movimiento {
 
     private String referencia;
 }
+
+ */
