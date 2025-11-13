@@ -19,12 +19,12 @@ public class Cuenta {
     @Enumerated(EnumType.STRING)
     private TipoCuenta categoria;
 
-    
 
     private int idMercadopago;
 
     private float saldoActual;
 
+    @Column(name = "cupo_km_mes")
     private int cupoKMMes;
 
     private Date fechaRenovacionCupo;
