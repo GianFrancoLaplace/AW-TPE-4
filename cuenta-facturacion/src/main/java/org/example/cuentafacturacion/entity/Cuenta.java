@@ -2,6 +2,8 @@ package org.example.cuentafacturacion.entity;
 
 import jakarta.persistence.*;
 import java.sql.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "cuenta")
@@ -9,13 +11,15 @@ public class Cuenta {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idCuenta;
+    private int idCuenta;
 
     @Enumerated(EnumType.STRING)
     private EstadoCuenta estado;
 
     @Enumerated(EnumType.STRING)
     private TipoCuenta categoria;
+
+    
 
     private int idMercadopago;
 
