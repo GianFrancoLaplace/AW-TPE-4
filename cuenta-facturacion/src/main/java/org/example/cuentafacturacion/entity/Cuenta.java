@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.sql.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "cuenta")
@@ -22,13 +24,7 @@ public class Cuenta {
     @Enumerated(EnumType.STRING)
     private TipoCuenta categoria;
 
-    @ManyToMany
-    @JoinTable(
-            name = "cuenta_usuario",
-            joinColumns = @JoinColumn(name = "cuenta_id"),
-            inverseJoinColumns = @JoinColumn(name = "usuario_id")
-    )
-    private Set<int> usuarios = new HashSet<>();
+    
 
     private int idMercadopago;
 
