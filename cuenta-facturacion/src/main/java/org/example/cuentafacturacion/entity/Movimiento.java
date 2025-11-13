@@ -1,9 +1,16 @@
 package org.example.cuentafacturacion.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import java.time.LocalDateTime;
 
 @Entity
+@Getter
+@Setter
 @Table(name = "movimiento")
 public class Movimiento {
 
@@ -22,6 +29,11 @@ public class Movimiento {
     private LocalDateTime fechaMovimiento;
 
     private String referencia;
+
+    public Movimiento() {}
+
+    public Movimiento(Cuenta cuentaNoEncontrada, float monto, String s, String s1, LocalDateTime now) {
+    }
 
     public Long getIdMovimiento() {
         return idMovimiento;

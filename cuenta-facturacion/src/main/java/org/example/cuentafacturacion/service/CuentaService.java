@@ -18,6 +18,7 @@ import java.util.Optional;
 
 @Service
 public class CuentaService {
+    private MovimientoService movimientoService;
 
     @Autowired
     private CuentaRepository cuentaRepository;
@@ -96,4 +97,30 @@ public class CuentaService {
                 viajes
         );
     }
+
+    public void cargarCredito(Long idCuenta, float monto) {
+        if (monto <= 0) {
+            throw new IllegalArgumentException("El monto debe ser mayor que 0");
+        }
+
+        movimientoService.registrarMovimiento(
+                idCuenta,
+                monto,
+                "Carga de credito",
+                "CARGA-" + System.currentTimeMillis()
+        );
+    }
+    public void descontarSaldoPorViaje(Long idCuenta, float costoTotal, String idViaje) {
+        if (costoTotal <= 0) {
+            throw new IllegalArgumentException("El costo del viaje debe ser mayor que 0");
+        }
+
+        movimientoService.registrarMovimiento(
+                idCuenta,
+                -costoTotal,
+                "Cobro de viaje",
+                "VIAJE-" + idViaje
+        );
+    }
+
 }
