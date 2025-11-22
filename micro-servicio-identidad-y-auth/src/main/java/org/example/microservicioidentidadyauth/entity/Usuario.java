@@ -15,7 +15,9 @@ public class Usuario {
     private String email;
     private String contrasenia;
     private String telefono;
-//    private Enum rol;
-//    private Cuenta cuenta;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Rol rol = Rol.USER;
 }
 

@@ -16,8 +16,10 @@ import java.util.Optional;
 public class AuthService {
     @Autowired
     private UsuarioRepository authRepository;
+
     @Autowired
     private JwtUtil jwtUtil;
+
     @Autowired
     private PasswordEncoder passwordEncoder;
 
@@ -34,43 +36,44 @@ public class AuthService {
     }
 
     public boolean validarToken(String token) {
-        try {
-            jwtUtil.extractAllClaims(token);
-            return true;
-        }
-        catch (Exception e) {
-            return false;
-        }
+        return jwtUtil.validateToken(token);
     }
 
-    //Registro de usuario
     public Usuario registrarUsuario(Usuario u) {
+        // Validaciones
+        if (u.getEmail() == null || u.getEmail().trim().isEmpty()) {
+            throw new RuntimeException("El email es obligatorio");
+        }
+
+        if (u.getContrasenia() == null || u.getContrasenia().length() < 6) {
+            throw new RuntimeException("La contraseña debe tener al menos 6 caracteres");
+        }
+
         if (authRepository.existsByEmail(u.getEmail())) {
             throw new RuntimeException("El email ya está registrado");
         }
 
-        // encriptamos la contraseña antes de guardarla
+        // Encriptar contraseña
         u.setContrasenia(passwordEncoder.encode(u.getContrasenia()));
-//        u.setRol("USER");
+        // u.setRol("USER"); // cuando lo agregues
+
         return authRepository.save(u);
     }
 
-    //Login (autenticación)
     public String login(String email, String password) {
         Optional<Usuario> usuarioOpt = authRepository.findByEmail(email);
 
         if (usuarioOpt.isEmpty()) {
-            throw new RuntimeException("Usuario no encontrado");
+            throw new RuntimeException("Credenciales incorrectas");
         }
 
         Usuario usuario = usuarioOpt.get();
 
-        //comparamos la contraseña encriptada
         if (!passwordEncoder.matches(password, usuario.getContrasenia())) {
-            throw new RuntimeException("Contraseña incorrecta");
+            throw new RuntimeException("Credenciales incorrectas");
         }
 
-        //si todo ok, generamos un token JWT
-        return jwtUtil.generateToken(usuario.getEmail());
+        // Generar token con información del usuario
+        return jwtUtil.generateToken(usuario);
     }
 }

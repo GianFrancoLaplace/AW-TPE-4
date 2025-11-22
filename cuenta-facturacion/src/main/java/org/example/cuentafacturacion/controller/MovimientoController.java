@@ -1,4 +1,3 @@
-/*
 package org.example.cuentafacturacion.controller;
 
 import org.example.cuentafacturacion.dto.MovimientoDTO;
@@ -29,4 +28,3 @@ public class MovimientoController {
         return ResponseEntity.ok(movimiento);
     }
 }
-*/

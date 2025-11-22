@@ -1,4 +1,3 @@
-/*
 package org.example.cuentafacturacion.controller;
 
 import org.example.cuentafacturacion.service.PausaService;
@@ -21,5 +20,3 @@ public class PausaController {
         return ResponseEntity.ok("Descuento aplicado correctamente (si correspondía)");
     }
 }
-
- */
