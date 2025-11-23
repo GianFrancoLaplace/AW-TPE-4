@@ -22,12 +22,12 @@ public class ParadaService {
         return repository.findAll();
     }
 
-    public Parada findById(Long id) {
+    public Parada findById(String id) {
         return repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Parada no encontrada"));
     }
 
-    public void deleteById(Long id) {
+    public void deleteById(String id) {
         repository.deleteById(id);
     }
 
@@ -40,7 +40,7 @@ public class ParadaService {
      * @return Parada actualizada
      * @throws RuntimeException si la parada no existe
      */
-    public Parada update(Long id, Parada paradaActualizada) {
+    public Parada update(String id, Parada paradaActualizada) {
         Parada existente = findById(id);
 
         // Actualizar solo campos no nulos
@@ -83,7 +83,7 @@ public class ParadaService {
      * @param id - ID de la parada a modificar
      * @param activa - true para activar, false para desactivar
      */
-    public void cambiarEstado(Long id, Boolean activa) {
+    public void cambiarEstado(String id, Boolean activa) {
         Parada parada = findById(id);
         parada.setActiva(activa);
         repository.save(parada);
@@ -142,7 +142,7 @@ public class ParadaService {
         );
     }
 
-    public boolean estaDentroDeParada(Long idParadaDestino, Double longitudActual, Double latitudActual) {
+    public boolean estaDentroDeParada(String idParadaDestino, Double longitudActual, Double latitudActual) {
         Parada parada = findById(idParadaDestino);
 
         // Conversión aproximada de grados a metros

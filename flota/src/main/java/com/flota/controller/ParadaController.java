@@ -25,7 +25,7 @@ public class ParadaController {
 
     // READ: GET /paradas/{id}
     @GetMapping("/{id}")
-    public ResponseEntity<Parada> getParadaById(@PathVariable Long id) {
+    public ResponseEntity<Parada> getParadaById(@PathVariable String id) {
         return ResponseEntity.ok(service.findById(id));
     }
 
@@ -38,7 +38,7 @@ public class ParadaController {
     // UPDATE: PUT /paradas/{id}
     @PutMapping("/{id}")
     public ResponseEntity<Parada> updateParada(
-            @PathVariable Long id,
+            @PathVariable String id,
             @RequestBody Parada paradaActualizada) {
         Parada updated = service.update(id, paradaActualizada);
         return ResponseEntity.ok(updated);
@@ -46,7 +46,7 @@ public class ParadaController {
 
     // DELETE: DELETE /paradas/{id}
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteParada(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteParada(@PathVariable String id) {
         service.deleteById(id);
         return ResponseEntity.noContent().build();
     }
@@ -57,7 +57,7 @@ public class ParadaController {
     // GET /paradas/{id}/validar-ubicacion?lat=-37.3213&lon=-59.1234
     @GetMapping("/{id}/validar-ubicacion")
     public ResponseEntity<Map<String, Boolean>> validarUbicacion(
-            @PathVariable Long id,
+            @PathVariable String id,
             @RequestParam Double lat,
             @RequestParam Double lon) {
         boolean dentroDeParada = service.estaDentroDeParada(id, lon, lat);
@@ -77,7 +77,7 @@ public class ParadaController {
     // Body: { "activa": true }
     @PutMapping("/{id}/estado")
     public ResponseEntity<Parada> cambiarEstadoParada(
-            @PathVariable Long id,
+            @PathVariable String id,
             @RequestBody Map<String, Boolean> body) {
         Boolean activa = body.get("activa");
         service.cambiarEstado(id, activa);
