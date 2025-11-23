@@ -64,4 +64,25 @@ public class cuentaController {
         ReporteUsoCuentaDTO reporte = serviceCuenta.obtenerReporteUso(idCuenta, fechaInicio, fechaFin);
         return ResponseEntity.ok(reporte);
     }
+
+    @PostMapping("/{idCuenta}/cargar")
+    public ResponseEntity<String> cargarCredito(
+            @PathVariable Long idCuenta,
+            @RequestParam float monto) {
+
+        serviceCuenta.cargarCredito(idCuenta, monto);
+        return ResponseEntity.ok("Credito cargado correctamente: $" + monto);
+    }
+
+    @PostMapping("/descontar-viaje")
+    public ResponseEntity<String> descontarSaldoPorViaje(
+            @RequestParam Long idCuenta,
+            @RequestParam float costoTotal,
+            @RequestParam String idViaje) {
+
+        serviceCuenta.descontarSaldoPorViaje(idCuenta, costoTotal, idViaje);
+        return ResponseEntity.ok("Saldo descontado por viaje " + idViaje + ": $" + costoTotal);
+    }
+
+
 }

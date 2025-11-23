@@ -1,12 +1,13 @@
 package org.example.cuentafacturacion.entity;
 
 import jakarta.persistence.*;
+import lombok.Data;
+
 import java.sql.Date;
-import java.util.HashSet;
-import java.util.Set;
 
 @Entity
 @Table(name = "cuenta")
+@Data
 public class Cuenta {
 
     @Id
@@ -19,12 +20,13 @@ public class Cuenta {
     @Enumerated(EnumType.STRING)
     private TipoCuenta categoria;
 
+    
+    private String nombre;
 
     private int idMercadopago;
 
     private float saldoActual;
 
-    @Column(name = "cupo_km_mes")
     private int cupoKMMes;
 
     private Date fechaRenovacionCupo;
@@ -41,57 +43,57 @@ public class Cuenta {
     public Integer getIdCuenta() {
         return idCuenta;
     }
-
-    public EstadoCuenta getEstado() {
-        return estado;
-    }
-
-    public TipoCuenta getCategoria() {
-        return categoria;
-    }
-
-    public int getIdMercadopago() {
-        return idMercadopago;
-    }
-
-    public float getSaldoActual() {
-        return saldoActual;
-    }
-
-    public int getCupoKMMes() {
-        return cupoKMMes;
-    }
-
-    public Date getFechaRenovacionCupo() {
-        return fechaRenovacionCupo;
-    }
+//
+//    public EstadoCuenta getEstado() {
+//        return estado;
+//    }
+//
+//    public TipoCuenta getCategoria() {
+//        return categoria;
+//    }
+//
+//    public int getIdMercadopago() {
+//        return idMercadopago;
+//    }
+//
+//    public float getSaldoActual() {
+//        return saldoActual;
+//    }
+//
+//    public int getCupoKMMes() {
+//        return cupoKMMes;
+//    }
+//
+//    public Date getFechaRenovacionCupo() {
+//        return fechaRenovacionCupo;
+//    }
 
     // Setters
     public void setIdCuenta(Integer idCuenta) {
         this.idCuenta = idCuenta;
     }
 
-    public void setEstado(EstadoCuenta estado) {
-        this.estado = estado;
-    }
-
-    public void setCategoria(TipoCuenta categoria) {
-        this.categoria = categoria;
-    }
-
-    public void setIdMercadopago(int idMercadopago) {
-        this.idMercadopago = idMercadopago;
-    }
-
-    public void setSaldoActual(float saldoActual) {
-        this.saldoActual = saldoActual;
-    }
-
-    public void setCupoKMMes(int cupoKMMes) {
-        this.cupoKMMes = cupoKMMes;
-    }
-
-    public void setFechaRenovacionCupo(Date fechaRenovacionCupo) {
-        this.fechaRenovacionCupo = fechaRenovacionCupo;
-    }
+//    public void setEstado(EstadoCuenta estado) {
+//        this.estado = estado;
+//    }
+//
+//    public void setCategoria(TipoCuenta categoria) {
+//        this.categoria = categoria;
+//    }
+//
+//    public void setIdMercadopago(int idMercadopago) {
+//        this.idMercadopago = idMercadopago;
+//    }
+//
+//    public void setSaldoActual(float saldoActual) {
+//        this.saldoActual = saldoActual;
+//    }
+//
+//    public void setCupoKMMes(int cupoKMMes) {
+//        this.cupoKMMes = cupoKMMes;
+//    }
+//
+//    public void setFechaRenovacionCupo(Date fechaRenovacionCupo) {
+//        this.fechaRenovacionCupo = fechaRenovacionCupo;
+//    }
 }
