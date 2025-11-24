@@ -1,6 +1,6 @@
 package org.example.microservicioidentidadyauth.service;
 
-import lombok.Data;
+import org.example.microservicioidentidadyauth.entity.Rol;
 import org.example.microservicioidentidadyauth.entity.Usuario;
 import org.example.microservicioidentidadyauth.repository.UsuarioRepository;
 import org.example.microservicioidentidadyauth.util.JwtUtil;
@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
-@Data
 @Service
 public class AuthService {
     @Autowired
@@ -55,7 +54,7 @@ public class AuthService {
 
         // Encriptar contraseña
         u.setContrasenia(passwordEncoder.encode(u.getContrasenia()));
-        // u.setRol("USER"); // cuando lo agregues
+        u.setRol(Rol.USER);
 
         return authRepository.save(u);
     }
