@@ -3,6 +3,7 @@ package org.example.cuentafacturacion.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 
+
 import java.sql.Date;
 
 @Entity
