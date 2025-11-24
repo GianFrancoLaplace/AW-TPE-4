@@ -18,6 +18,8 @@ import java.util.Optional;
 
 @Service
 public class CuentaService {
+    // FIX: Se agrega Autowired a MovimientoService para que funcione correctamente
+    @Autowired
     private MovimientoService movimientoService;
 
     @Autowired
@@ -32,13 +34,42 @@ public class CuentaService {
     @Autowired
     private ViajeClient viajeClient;
 
+    // NUEVO: Inyección del servicio de pagos mockeado
+    @Autowired
+    private MercadoPagoService mercadoPagoService;
+
+
     public Cuenta addCuenta(Cuenta cuenta) {
+        // Asumimos estado ACTIVA al crear
+        if (cuenta.getEstado() == null) {
+            cuenta.setEstado(Cuenta.EstadoCuenta.ACTIVA);
+        }
         return cuentaRepository.save(cuenta);
     }
 
-    public void updateCuenta(int id) {
-        cuentaRepository.updateEstado(id);
+    // MODIFICADO: Refactorizado para cumplir la consigna 4b / 60
+    public void anularCuenta(Long id) {
+        Cuenta cuenta = cuentaRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Cuenta TPE no encontrada."));
+
+        // 1. ANULAR CUENTA EN EL SISTEMA EXTERNO (MOCK DE MP)
+        // El administrador anula la cuenta, lo que implica bloquear la fuente de pago externa.
+        if (mercadoPagoService.anularFuenteDePago(cuenta.getIdMercadopago())) {
+            // 2. CAMBIAR ESTADO INTERNO solo si la fuente de pago externa se procesó.
+            cuenta.setEstado(Cuenta.EstadoCuenta.ANULADA);
+            cuentaRepository.save(cuenta);
+            System.out.println("✅ Cuenta TPE " + id + " anulada exitosamente (y fuente de pago bloqueada).");
+        } else {
+            // Si el servicio de pagos externo falla o reporta un error.
+            throw new RuntimeException("⚠️ No se pudo anular la cuenta de pagos externa para Cuenta TPE " + id);
+        }
     }
+
+    // Mantenemos el update original con un nombre más descriptivo si es necesario
+    public void updateCuenta(int id) {
+        cuentaRepository.updateEstado(id); // Asumo que este método original es de cambio de estado.
+    }
+
 
     public void updatePlan(int id, String categoria) {
         cuentaRepository.updatePlan(id, categoria);
@@ -98,23 +129,42 @@ public class CuentaService {
         );
     }
 
+    // MODIFICADO: Ahora usa el Mock de Mercado Pago para simular el cargo externo.
     public void cargarCredito(Long idCuenta, float monto) {
         if (monto <= 0) {
             throw new IllegalArgumentException("El monto debe ser mayor que 0");
         }
 
-        movimientoService.registrarMovimiento(
-                idCuenta,
-                monto,
-                "Carga de credito",
-                "CARGA-" + System.currentTimeMillis()
-        );
+        Cuenta cuenta = cuentaRepository.findById(idCuenta)
+                .orElseThrow(() -> new RuntimeException("Cuenta TPE no encontrada."));
+
+        // 1. SIMULAR TRANSACCIÓN EN MP (Validación de tarjeta/fondos/cargo)
+        // El monto es positivo, simulando el cargo a la tarjeta externa de MP.
+        if (mercadoPagoService.procesarTransaccion(cuenta.getIdMercadopago(), monto)) {
+
+            // 2. Si la transacción externa es OK, se registra el movimiento interno (CRÉDITO A LA CUENTA TPE)
+            movimientoService.registrarMovimiento(
+                    idCuenta,
+                    monto,
+                    "Carga de credito",
+                    "CARGA-" + System.currentTimeMillis()
+            );
+
+            System.out.println("Carga de crédito exitosa en cuenta TPE " + idCuenta);
+
+        } else {
+            // Si el mock falla (ej: ID de tarjeta simulada como inválida o bloqueada)
+            throw new RuntimeException("Error al procesar la carga de crédito en MercadoPago (simulado). Verifique logs.");
+        }
     }
+
+    // Se mantiene igual ya que el débito es INTERNO contra el saldo cargado.
     public void descontarSaldoPorViaje(Long idCuenta, float costoTotal, String idViaje) {
         if (costoTotal <= 0) {
             throw new IllegalArgumentException("El costo del viaje debe ser mayor que 0");
         }
 
+        // El débito es interno (registrado como movimiento negativo)
         movimientoService.registrarMovimiento(
                 idCuenta,
                 -costoTotal,

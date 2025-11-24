@@ -23,8 +23,9 @@ public class cuentaController {
     }
 
     @PutMapping("/anularCuenta/{id}")
-    public void anularCuenta(@PathVariable int id) {
-        serviceCuenta.updateCuenta(id);
+    public ResponseEntity<String> anularCuenta(@PathVariable Long id) {
+        serviceCuenta.anularCuenta(id); // <--- AQUI ESTÁ LA NUEVA LÓGICA
+        return ResponseEntity.ok("Cuenta TPE " + id + " anulada exitosamente (y fuente de pago bloqueada).");
     }
 
     @PutMapping("/cambiarPlan/{id}")
