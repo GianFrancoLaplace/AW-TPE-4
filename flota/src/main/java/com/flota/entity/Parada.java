@@ -1,22 +1,29 @@
 package com.flota.entity;
 
-import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-@Entity
-@Table(name = "parada")
+/**
+ * Representa una parada física donde los usuarios pueden tomar o dejar monopatines.
+ * Define un área circular (centro + radio).
+ */
+@Document(collection = "paradas")
 @Getter @Setter
 public class Parada {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idParada;
+    private String id;
 
     private String nombre;
     private Double latitudCentro;
     private Double longitudCentro;
-    private Double radioMetros; // Para definir el geofence
+    private Double radioMetros;
     private Boolean activa;
 
-    public Parada() {}
+    public Parada() {
+        this.activa = true;
+        this.radioMetros = 50.0;
+    }
 }

@@ -1,8 +1,6 @@
 package org.example.cuentafacturacion.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 /**
  * DTO para el detalle de un viaje individual en el reporte de uso.
@@ -10,6 +8,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+
 public class DetalleViajeDTO {
     private Long idViaje;
     private String fechaInicio;

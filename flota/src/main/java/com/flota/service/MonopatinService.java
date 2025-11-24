@@ -25,11 +25,12 @@ public class MonopatinService {
         return repository.findAll();
     }
 
-    public Monopatin findById(Long id) {
-        return repository.findById(id).orElseThrow(() -> new RuntimeException("Monopatín no encontrado."));
+    public Monopatin findById(String id) {
+        return repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Monopatín no encontrado: " + id));
     }
 
-    public void deleteById(Long id) {
+    public void deleteById(String id) {
         repository.deleteById(id);
     }
 
@@ -39,13 +40,13 @@ public class MonopatinService {
                 .toList();
     }
 
-    public void cambiarEstado(Long idMonopatin, String nuevoEstado) {
+    public void cambiarEstado(String idMonopatin, String nuevoEstado) {
         Monopatin monopatin = findById(idMonopatin);
         monopatin.setEstado(Monopatin.EstadoMonopatin.valueOf(nuevoEstado));
         repository.save(monopatin);
     }
 
-    public Monopatin actualizarUbicacion(Long id, Double latitud, Double longitud) {
+    public Monopatin actualizarUbicacion(String id, Double latitud, Double longitud) {
         // Validar coordenadas
         if (latitud == null || longitud == null) {
             throw new IllegalArgumentException("Latitud y longitud no pueden ser nulas");
@@ -64,7 +65,7 @@ public class MonopatinService {
         return repository.save(monopatin);
     }
 
-    public void actualizarUso(Long id, Double kmRecorridos, Integer minutosUsados) {
+    public void actualizarUso(String id, Double kmRecorridos, Integer minutosUsados) {
         Monopatin monopatin = findById(id);
 
         if (monopatin == null)
@@ -142,7 +143,7 @@ public class MonopatinService {
      * @return Monopatín actualizado
      * @throws RuntimeException si el monopatín no existe
      */
-    public Monopatin update(long id, Monopatin monopatinActualizado) {
+    public Monopatin update(String id, Monopatin monopatinActualizado) {
         Monopatin existente = findById(id);
 
         if (monopatinActualizado.getEstado() != null) {
@@ -173,7 +174,7 @@ public class MonopatinService {
      * @param idParada - ID de la parada donde se ubicará
      * @return Monopatín con ubicación actualizada
      */
-    public Monopatin ubicarEnParada(Long idMonopatin, Long idParada) {
+    public Monopatin ubicarEnParada(String idMonopatin, String idParada) {
         Monopatin monopatin = findById(idMonopatin);
         Parada parada = paradaService.findById(idParada);
 
