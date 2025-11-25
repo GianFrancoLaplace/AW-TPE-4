@@ -32,7 +32,7 @@ public class MercadoPagoMockImpl implements MercadoPagoService {
     public boolean anularFuenteDePago(int idMercadopago) {
         if (idMercadopago == ID_CUENTA_BLOQUEADA) {
             System.out.println("[MOCK MP - INFO] La fuente de pago " + idMercadopago + " ya estaba marcada como anulada.");
-            return false; // Asumimos que la anulación previa es exitosa.
+            return false;
         }
 
         System.out.println("[MOCK MP - OK] Fuente de pago " + idMercadopago + " anulada exitosamente en el sistema de pagos.");
