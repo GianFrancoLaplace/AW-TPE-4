@@ -1,9 +1,16 @@
 package org.example.cuentafacturacion.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
+@Schema(description = "Detalles de un movimiento")
 public class MovimientoDTO {
+    @Schema(description = "ID del movimiento", example = "1")
     private Long idCuenta;
+    @Schema(description = "Monto del movimiento", example = "-250.5")
     private float monto;
+    @Schema(description = "descripcion del movimiento", example = "descripcion")
     private String descripcion;
+    @Schema(description = "referencia movimiento", example = "referencia")
     private String referencia;
 
     public Long getIdCuenta() {

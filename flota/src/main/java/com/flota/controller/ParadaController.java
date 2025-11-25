@@ -2,6 +2,8 @@ package com.flota.controller;
 
 import com.flota.entity.Parada;
 import com.flota.service.ParadaService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -10,6 +12,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/paradas")
+@Tag(name = "Paradas", description = "Gestión de paradas y zonas habilitadas")
 public class ParadaController {
 
     @Autowired
@@ -18,24 +21,28 @@ public class ParadaController {
     // ==================== ABM BÁSICO ====================
 
     // CREATE: POST /paradas
+    @Operation(summary = "Crear parada")
     @PostMapping
     public ResponseEntity<Parada> createParada(@RequestBody Parada parada) {
         return ResponseEntity.ok(service.save(parada));
     }
 
     // READ: GET /paradas/{id}
+    @Operation(summary = "Obtener parada por ID")
     @GetMapping("/{id}")
     public ResponseEntity<Parada> getParadaById(@PathVariable String id) {
         return ResponseEntity.ok(service.findById(id));
     }
 
     // READ: GET /paradas (listado completo)
+    @Operation(summary = "Listar todas las paradas")
     @GetMapping
     public ResponseEntity<List<Parada>> getAllParadas() {
         return ResponseEntity.ok(service.findAll());
     }
 
     // UPDATE: PUT /paradas/{id}
+    @Operation(summary = "Actualizar parada")
     @PutMapping("/{id}")
     public ResponseEntity<Parada> updateParada(
             @PathVariable String id,
@@ -45,6 +52,7 @@ public class ParadaController {
     }
 
     // DELETE: DELETE /paradas/{id}
+    @Operation(summary = "Eliminar parada")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteParada(@PathVariable String id) {
         service.deleteById(id);
@@ -55,6 +63,7 @@ public class ParadaController {
 
     // Validar si una ubicación está dentro de una parada (para finalizar viaje)
     // GET /paradas/{id}/validar-ubicacion?lat=-37.3213&lon=-59.1234
+    @Operation(summary = "Validar ubicación dentro de parada")
     @GetMapping("/{id}/validar-ubicacion")
     public ResponseEntity<Map<String, Boolean>> validarUbicacion(
             @PathVariable String id,
@@ -66,6 +75,7 @@ public class ParadaController {
 
     // Obtener paradas activas
     // GET /paradas/activas
+    @Operation(summary = "Listar paradas activas")
     @GetMapping("/activas")
     public ResponseEntity<List<Parada>> getParadasActivas() {
         List<Parada> activas = service.getParadasActivas();
@@ -75,6 +85,7 @@ public class ParadaController {
     // Activar/desactivar parada
     // PUT /paradas/{id}/estado
     // Body: { "activa": true }
+    @Operation(summary = "Cambiar estado de parada")
     @PutMapping("/{id}/estado")
     public ResponseEntity<Parada> cambiarEstadoParada(
             @PathVariable String id,
@@ -86,6 +97,7 @@ public class ParadaController {
 
     // Buscar paradas cercanas a una ubicación
     // GET /paradas/cercanas?lat=-37.3213&lon=-59.1234&radio=500
+    @Operation(summary = "Paradas cercanas")
     @GetMapping("/cercanas")
     public ResponseEntity<List<Parada>> getParadasCercanas(
             @RequestParam Double lat,
