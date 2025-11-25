@@ -12,7 +12,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/cuenta")
-public class cuentaController {
+public class CuentaController {
 
     @Autowired
     private CuentaService serviceCuenta;
@@ -24,8 +24,8 @@ public class cuentaController {
 
     @PutMapping("/anularCuenta/{id}")
     public ResponseEntity<String> anularCuenta(@PathVariable Long id) {
-        serviceCuenta.anularCuenta(id); // <--- AQUI ESTÁ LA NUEVA LÓGICA
-        return ResponseEntity.ok("Cuenta TPE " + id + " anulada exitosamente (y fuente de pago bloqueada).");
+        serviceCuenta.anularCuenta(id);
+        return ResponseEntity.ok("Cuenta " + id + " anulada exitosamente (y fuente de pago bloqueada).");
     }
 
     @PutMapping("/cambiarPlan/{id}")
