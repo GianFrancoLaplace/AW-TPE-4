@@ -19,7 +19,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/cuenta")
 @Tag(name = "Cuentas", description = "Operaciones relacionadas con la gestion de cuentas y saldo")
-public class cuentaController {
+public class CuentaController {
 
     @Autowired
     private CuentaService serviceCuenta;
@@ -89,7 +89,7 @@ public class cuentaController {
     @Operation(summary = "Obtener usuarios asociados a una cuenta")
     @GetMapping("/usuarios/{id_cuenta}")
     public List<Integer> getUsuarios(@Parameter(description = "ID de la cuenta")
-                                         @PathVariable int id_cuenta) {
+                                     @PathVariable int id_cuenta) {
         return serviceCuenta.getUsuarios(id_cuenta);
     }
 
