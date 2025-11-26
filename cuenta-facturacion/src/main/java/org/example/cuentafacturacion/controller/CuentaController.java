@@ -70,6 +70,15 @@ public class CuentaController {
             @PathVariable int id) {
         return serviceCuenta.findCuenta(id);
     }
+    @Operation(summary = "Chequear cuenta habilitada")
+    @GetMapping("/verificarCuentaHabilitada/{id}")
+    public boolean verificarCuentaHabilitada(
+            @Parameter(description = "ID de la cuenta", example = "1")
+            @PathVariable int id) {
+        return serviceCuenta.verificarCuentaHabilitada(id);
+    }
+
+
 
 
     @Operation(summary = "Asociar usuario a cuenta")

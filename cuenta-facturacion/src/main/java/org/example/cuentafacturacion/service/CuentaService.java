@@ -64,10 +64,6 @@ public class CuentaService {
         }
     }
 
-    // Mantenemos el update original con un nombre más descriptivo si es necesario
-    public void updateCuenta(int id) {
-        cuentaRepository.updateEstado(id); // Asumo que este método original es de cambio de estado.
-    }
 
 
     public void updatePlan(int id, String categoria) {
@@ -76,6 +72,10 @@ public class CuentaService {
 
     public Optional<Cuenta> findCuenta(int id) {
         return cuentaRepository.findById((long) id);
+    }
+
+    public boolean verificarCuentaHabilitada(int id) {
+        return cuentaRepository.findById((long) id).get().getEstado() == Cuenta.EstadoCuenta.ACTIVA;
     }
 
     public void addUsuario(int id_cuenta, int id_usuario) {
