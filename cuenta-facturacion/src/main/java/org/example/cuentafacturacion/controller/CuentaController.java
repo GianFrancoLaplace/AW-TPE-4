@@ -19,7 +19,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/cuenta")
 @Tag(name = "Cuentas", description = "Operaciones relacionadas con la gestion de cuentas y saldo")
-public class cuentaController {
+public class CuentaController {
 
     @Autowired
     private CuentaService serviceCuenta;
