@@ -1,4 +1,6 @@
 package org.example.microservicioidentidadyauth.controller;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.example.microservicioidentidadyauth.dto.LoginRequestDTO;
 import org.example.microservicioidentidadyauth.dto.LoginResponseDTO;
 import org.example.microservicioidentidadyauth.dto.RegisterDTO;
@@ -15,6 +17,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/usuario")
+@Tag(name = "Autenticación", description = "Registro y login de usuarios")
 public class AuthController {
     @Autowired
     private AuthService authService;
@@ -22,6 +25,7 @@ public class AuthController {
     @Autowired
     private JwtUtil jwtUtil;
 
+    @Operation(summary = "Obtener usuarios")
     @GetMapping()
     public ResponseEntity<List<Usuario>> obtenerUsuarios(){
         List<Usuario> usuarios = authService.buscarTodosLosUsuarios();
@@ -31,6 +35,7 @@ public class AuthController {
         return ResponseEntity.ok(usuarios);
     }
 
+    @Operation(summary = "Obtener usuario")
     @GetMapping("/{id}")
     public ResponseEntity<Optional<Usuario>> obtenerUsuario(@PathVariable Long id){
         Optional<Usuario> usuario = authService.buscarPorId(id);
@@ -40,6 +45,7 @@ public class AuthController {
         return ResponseEntity.notFound().build();
     }
 
+    @Operation(summary = "Registrar usuario")
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterDTO request) {
         try {
@@ -61,6 +67,7 @@ public class AuthController {
         }
     }
 
+    @Operation(summary = "Login de usuario")
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequestDTO request) {
         try {
@@ -86,6 +93,7 @@ public class AuthController {
         }
     }
 
+    @Operation(summary = "Validar token JWT")
     @GetMapping("/validate")
     public ResponseEntity<?> validateToken(@RequestHeader("Authorization") String authHeader) {
         try {
@@ -118,6 +126,7 @@ public class AuthController {
     }
 
     // Endpoint para obtener info del usuario actual (desde el token)
+    @Operation(summary = "obtener informacion usuario actual")
     @GetMapping("/me")
     public ResponseEntity<?> getCurrentUser(@RequestHeader("Authorization") String authHeader) {
         try {

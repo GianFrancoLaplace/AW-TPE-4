@@ -2,6 +2,9 @@ package com.flota.controller;
 
 import com.flota.entity.Monopatin;
 import com.flota.service.MonopatinService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -10,6 +13,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/monopatines")
+@Tag(name = "Monopatines", description = "Gestión de monopatines y su estado")
 public class MonopatinController {
 
     @Autowired
@@ -18,26 +22,33 @@ public class MonopatinController {
     // ==================== ABM BÁSICO ====================
 
     // CREATE: POST /monopatines
+    @Operation(summary = "Crear monopatín", description = "Registra un nuevo monopatín en el sistema")
     @PostMapping
     public ResponseEntity<Monopatin> createMonopatin(@RequestBody Monopatin monopatin) {
         Monopatin nuevo = service.save(monopatin);
         return ResponseEntity.ok(nuevo);
     }
 
+
     // READ: GET /monopatines/{id}
+    @Operation(summary = "Obtener monopatín por ID")
     @GetMapping("/{id}")
-    public ResponseEntity<Monopatin> getMonopatinById(@PathVariable String id) {
+    public ResponseEntity<Monopatin> getMonopatinById(
+            @Parameter(description = "ID del monopatín", example = "1")
+            @PathVariable String id) {
         Monopatin monopatin = service.findById(id);
         return ResponseEntity.ok(monopatin);
     }
 
     // READ: GET /monopatines (listado completo)
+    @Operation(summary = "Listar todos los monopatines")
     @GetMapping
     public ResponseEntity<List<Monopatin>> getAllMonopatines() {
         return ResponseEntity.ok(service.findAll());
     }
 
     // UPDATE: PUT /monopatines/{id}
+    @Operation(summary = "Actualizar monopatín")
     @PutMapping("/{id}")
     public ResponseEntity<Monopatin> updateMonopatin(
             @PathVariable String id,
@@ -47,6 +58,7 @@ public class MonopatinController {
     }
 
     // DELETE: DELETE /monopatines/{id}
+    @Operation(summary = "Eliminar monopatín")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteMonopatin(@PathVariable String id) {
         service.deleteById(id);
@@ -59,6 +71,7 @@ public class MonopatinController {
     // PUT /monopatines/{id}/estado
     // Body: { "nuevoEstado": "EN_MANTENIMIENTO" }
     @PutMapping("/{id}/estado")
+    @Operation(summary = "Cambiar estado del monopatín")
     public ResponseEntity<Monopatin> cambiarEstado(
             @PathVariable String id,
             @RequestBody Map<String, String> body) {
@@ -70,6 +83,7 @@ public class MonopatinController {
     // Actualizar ubicación GPS (lo llama el monopatín o el servicio de Viajes)
     // PUT /monopatines/{id}/ubicacion
     // Body: { "latitud": -37.3213, "longitud": -59.1234 }
+    @Operation(summary = "Actualizar ubicación GPS")
     @PutMapping("/{id}/ubicacion")
     public ResponseEntity<Monopatin> actualizarUbicacion(
             @PathVariable String id,
@@ -83,6 +97,7 @@ public class MonopatinController {
     // Actualizar km y tiempo de uso (lo llama el servicio de Viajes al finalizar)
     // PUT /monopatines/{id}/uso
     // Body: { "kmRecorridos": 5.2, "minutosUsados": 25 }
+    @Operation(summary = "Actualizar uso del monopatín")
     @PutMapping("/{id}/uso")
     public ResponseEntity<Monopatin> actualizarUso(
             @PathVariable String id,
@@ -97,6 +112,7 @@ public class MonopatinController {
 
     // Reporte de monopatines que necesitan mantenimiento
     // GET /monopatines/reporte-mantenimiento?umbralKm=500
+    @Operation(summary = "Monopatines que requieren mantenimiento")
     @GetMapping("/reporte-mantenimiento")
     public ResponseEntity<List<Monopatin>> getMantenimientoReport(
             @RequestParam double umbralKm) {
@@ -106,6 +122,7 @@ public class MonopatinController {
 
     // Buscar monopatines cercanos a una ubicación
     // GET /monopatines/cercanos?lat=-37.3213&lon=-59.1234&radio=500
+    @Operation(summary = "Monopatines cercanos")
     @GetMapping("/cercanos")
     public ResponseEntity<List<Monopatin>> getMonopatinesCercanos(
             @RequestParam Double lat,
@@ -117,6 +134,7 @@ public class MonopatinController {
 
     // Obtener monopatines disponibles
     // GET /monopatines/disponibles
+    @Operation(summary = "Monopatines disponibles")
     @GetMapping("/disponibles")
     public ResponseEntity<List<Monopatin>> getMonopatinesDisponibles() {
         List<Monopatin> disponibles = service.getMonopatinesDisponibles();
@@ -125,6 +143,7 @@ public class MonopatinController {
 
     // Registrar monopatín en mantenimiento
     // POST /monopatines/{id}/mantenimiento
+    @Operation(summary = "Enviar monopatín a mantenimiento")
     @PostMapping("/{id}/mantenimiento")
     public ResponseEntity<Monopatin> registrarEnMantenimiento(@PathVariable String id) {
         service.cambiarEstado(id, "EN_MANTENIMIENTO");
@@ -134,6 +153,7 @@ public class MonopatinController {
     // Ubicar monopatín en parada
     // POST /monopatines/{id}/ubicar-parada
     // Body: { "idParada": 1 }
+    @Operation(summary = "Ubicar monopatín en parada")
     @PostMapping("/{id}/ubicar-parada")
     public ResponseEntity<Monopatin> ubicarEnParada(
             @PathVariable String id,
