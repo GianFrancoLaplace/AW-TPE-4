@@ -16,38 +16,49 @@ public class GatewayConfig {
     @Bean
     public RouteLocator customRouteLocator(RouteLocatorBuilder builder) {
         return builder.routes()
-                // Auth Service
-                .route("auth-service", r -> r
+
+                // Auth sin filtro
+                .route("auth-service-public", r -> r
+                        .path("/api/usuario/login", "/api/usuario/register")
+                        .uri("http://localhost:8081"))
+
+                // Auth protegido (solo endpoints que deben requerir JWT)
+                .route("auth-service-protected", r -> r
                         .path("/api/usuario/**")
                         .filters(f -> f.filter(jwtAuthenticationFilter))
                         .uri("http://localhost:8081"))
 
-                // Otros microservicios que vayas agregando
-                .route("empleado-service", r -> r
+                // Viajes
+                .route("viajes-service", r -> r
                         .path("/api/viajes/**")
                         .filters(f -> f.filter(jwtAuthenticationFilter))
                         .uri("http://localhost:8082"))
 
-                .route("empleado-service", r -> r
+                // Flota
+                .route("flota-service", r -> r
                         .path("/api/flota/**")
                         .filters(f -> f.filter(jwtAuthenticationFilter))
                         .uri("http://localhost:8083"))
 
-                .route("empleado-service", r -> r
+                // Mantenimiento
+                .route("mantenimiento-service", r -> r
                         .path("/api/mantenimiento/**")
                         .filters(f -> f.filter(jwtAuthenticationFilter))
                         .uri("http://localhost:8084"))
 
-                .route("tarea-service", r -> r
+                // Cuenta
+                .route("cuenta-service", r -> r
                         .path("/api/cuenta/**")
                         .filters(f -> f.filter(jwtAuthenticationFilter))
                         .uri("http://localhost:8085"))
 
-                .route("tarea-service", r -> r
+                // Tarifa
+                .route("tarifa-service", r -> r
                         .path("/api/tarifa/**")
                         .filters(f -> f.filter(jwtAuthenticationFilter))
                         .uri("http://localhost:8086"))
 
                 .build();
     }
+
 }
