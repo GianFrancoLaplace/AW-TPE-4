@@ -89,7 +89,7 @@ public class CuentaController {
     @Operation(summary = "Obtener usuarios asociados a una cuenta")
     @GetMapping("/usuarios/{id_cuenta}")
     public List<Integer> getUsuarios(@Parameter(description = "ID de la cuenta")
-                                         @PathVariable int id_cuenta) {
+                                     @PathVariable int id_cuenta) {
         return serviceCuenta.getUsuarios(id_cuenta);
     }
 
