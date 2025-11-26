@@ -1,5 +1,6 @@
 package com.viajes.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -37,12 +38,11 @@ public class Viaje {
     private EstadoViaje estadoViaje;
 
     @OneToMany(mappedBy = "viaje", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<Pausa> pausas = new ArrayList<>();
-
 
     public Viaje() {
     }
-
 
     public enum EstadoViaje {
         EN_CURSO,

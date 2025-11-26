@@ -1,5 +1,6 @@
 package com.viajes.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,6 +19,7 @@ public class Pausa {
     private Long id;
 
     @ManyToOne
+    @JsonBackReference
     @JoinColumn(name = "id_viaje")
     private Viaje viaje;
 
