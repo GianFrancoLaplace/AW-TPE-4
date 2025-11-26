@@ -1,0 +1,35 @@
+spring:
+  application:
+    name: gateway
+
+  cloud:
+    gateway:
+      routes:
+        - id: auth-service
+          uri: http://localhost:8081
+          predicates:
+            - Path=/api/usuario/**
+        - id: viajes-service
+          uri: http://localhost:8082
+          predicates:
+            - Path=/api/viajes/**
+        - id: flota-service
+          uri: http://localhost:8083
+          predicates:
+            - Path=/api/flota/**
+        - id: mantenimiento-service
+          uri: http://localhost:8084
+          predicates:
+            - Path=/api/mantenimiento/**
+        - id: cuenta-service
+          uri: http://localhost:8085
+          predicates:
+            - Path=/api/cuenta/**
+        - id: tarifa-service
+          uri: http://localhost:8086
+          predicates:
+            - Path=/api/tarifa/**
+
+jwt:
+  secret: "404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970"
+  expiration: 86400000
