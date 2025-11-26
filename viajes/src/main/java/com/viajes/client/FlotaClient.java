@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-@FeignClient(name = "flota-service", url = "http://localhost:8083") // Cambiar URL según despliegue
+@FeignClient(name = "flota", url = "http://localhost:8083") // Cambiar URL según despliegue
 public interface FlotaClient {
 
     @GetMapping("/flota/disponibilidad")
